@@ -3,11 +3,35 @@
 import sqlite3 
 database = "database.sqlite"
 conn = sqlite3.connect(database)
+
 print("database connected successfully")
+
+conn.execute("""
+CREATE TABLE IF NOT EXISTS example 
+( s_number INT PRIMARY KEY NOT NULL, 
+Name TEXT NOT NULL, 
+age INT DEFAULT(18) );
+
+""")
+print("table created successfully")
+
+# conn.execute("""
+# INSERT INTO example 
+# (s_number,Name, age ) values (11028, "Timothy", 24 );
+# """)
+
+# conn.execute("""
+# INSERT INTO example 
+# (s_number,Name, age ) values (27733, "Terry", NULL  );
+# """)
+# conn.commit()
 
 import pandas as pd
 tables = pd.read_sql ("SELECT * FROM sqlite_master WHERE type='table';", conn )
-#print(tables)
+print(tables)
+
+example = pd.read_sql("SELECT * FROM example;",conn )
+print(example)
 
 teams = pd.read_sql("SELECT * FROM Team;", conn)
 #print(teams) 
@@ -22,13 +46,21 @@ ordered_players = pd.read_sql("SELECT * from Player ORDER BY Player_Name DESC;",
 #print(ordered_players)
 #Count is used to get the total numberof rows that satisfy a given condition. 
 GL_total_wins = pd.read_sql("SELECT COUNT(Match_Id) from Match WHERE Match_Winner == 13;", conn)
-print(GL_total_wins)
+#print(GL_total_wins)
 #sum it returns the total sum value of a numerical value
 extra_runs = pd.read_sql("Select sum(Extra_Runs) from Extra_Runs ;", conn)
-print(extra_runs)
+#print(extra_runs)
 #average returns the average value of a numeric value
 GL_avg_wm = pd.read_sql("SELECT AVG (win_Margin) from Match WHERE Match_Winner == 13;", conn)
-print(GL_avg_wm)
+#print(GL_avg_wm)
 # Group_by converts all the summary values in groups of the same values
 result = pd.read_sql("SELECT COUNT (Player_Id), Country_Name  from Player GROUP BY Country_Name;", conn)
-print(result)
+#print(result)
+
+
+null_player_match = pd.read_sql("""
+SELECT * 
+FROM example 
+WHERE  age IS NOT NULL;
+""", conn)
+print(null_player_match)
