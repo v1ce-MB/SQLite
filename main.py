@@ -64,3 +64,37 @@ FROM example
 WHERE  age IS NOT NULL;
 """, conn)
 print(null_player_match)
+
+#Inner joint only returns records that are in both tables.
+result2 = pd.read_sql ("""
+SELECT Match_Id, Match_Winner, Team_Name
+FROM match 
+LEFT JOIN Team                     
+ON Match.Match_Winner == Team.Team_Id
+;
+""" ,  conn)
+print(result2)
+
+result3 = pd.read_sql("""
+SELECT Team_Name, Match_Id, Match_Winner
+FROM Team 
+LEFT JOIN Match                      
+ON Team.Team_Id == Match.Match_Winner
+WHERE Season_Id == 8
+;""", conn)
+
+
+#print(result3)
+# Left Join returns every row on the left table and if the join condition is not met then NULL values are used to fill the columns from the right table
+# right Join returns every row on the right table and if the join condition is not met then NULL values are used to fill the columns from the left table
+
+Union = pd.read_sql("""
+SELECT Player_Name FROM Player
+UNION 
+SELECT Team_name FROM Team
+UNION
+SELECT Name FROM example
+;
+""" ,conn)
+print(Union)
+# Union combines two results that appear from multiple select statements. 
